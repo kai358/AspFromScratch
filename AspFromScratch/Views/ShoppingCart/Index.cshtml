@@ -1,0 +1,89 @@
+﻿@model ShoppingCartViewModel
+
+<h3 class="my-5">
+    Shopping cart
+</h3>
+
+@if (Model.TotalAmount != 0.0M)
+    {
+<div class="row gx-3">
+    <div class="col-7">
+        @foreach (var line in Model.ShoppingCart.ShoppingCartItems)
+        {
+            <div class="card shopping-cart-card mb-2 position-relative">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img src="@line.Pie.ImageThumbnailUrl" class="img-fluid rounded-start p-2" alt="@line.Pie.Name">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-text">@line.Amount x @line.Pie.Name</h5>
+                            <div class="d-flex justify-content-between">
+                                <h6>@line.Pie.ShortDescription</h6>
+                                <h2>@line.Pie.Price.ToString("c")</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="nav-link position-absolute top-0 start-100 translate-middle" asp-controller="ShoppingCart" asp-action="RemoveFromShoppingCart" asp-route-id="@line.Pie.PieId">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                    </svg>
+                </a>
+            </div>
+            }
+    </div>
+    <div class="col-5">
+        <div class="card shopping-cart-card p-3">
+            <div id="amountBlock" class="row">
+                <h4 class="col">Total:</h4>
+                <h4 id="totalAmount" class="col text-end">@Model.TotalAmount.ToString("c")</h4>
+            </div>
+            <hr />
+            <div id="promoBlock" class="text-center d-grid">
+                <input id="txtPromo" type="text" style="margin-bottom:10px;" placeholder="Enter your promocode..." />
+                <button id="promoButton" class="btn btn-secondary">Enter Promo</button>
+                <br />
+            </div>       
+            <div class="text-center d-grid">
+                <a class="btn btn-secondary" asp-controller="Order"
+                   asp-action="Checkout"><h4>Check out now!</h4></a>
+            </div>
+        </div>
+    </div>
+</div>
+    }
+else
+{
+      <div>
+          <p>Your cart is empty ! Please add some delicios pies :)</p>
+      </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var count = 0;
+        $("#promoButton").click(function () {
+            var promoCode = $("#txtPromo").val();
+            if (promoCode === '123456') {
+                var currentTotal = parseFloat($("#totalAmount").text());
+                var totalWithPromo = currentTotal * 0.8;
+                $("#amountBlock").append('<h4 id="totalAmount" class="col text-end">' + totalWithPromo.toFixed(2) + ' BYN</h4>');
+                $("#totalAmount").css("text-decoration", "line-through")
+                $("#promoBlock").remove();
+            }
+            else {
+                if (count == 0) {
+                    $("#txtPromo").val('');
+                    $("#txtPromo").after('<p style="text-align:left;color: crimson;padding-left: 2px">No such promo</p>');
+                    count++;
+                }
+                else {
+                    $("#txtPromo").val('');
+                }
+            
+            }
+
+        });
+    });
+</script>
